@@ -1,0 +1,33 @@
+---
+- hosts: all
+  gather_facts: false
+  remote_user: root
+
+  tasks:
+  - name: Include vars
+    include_vars:
+      file: variables.yml
+
+  - name: Create app user
+    become: yes
+    user:
+      name: "{{ APP_USER }}"
+# Need to install java version 8
+  - name: Install app dependencies
+    become: yes
+    apt:
+      name: "{{ APP_DEPENDENCIES }}"
+      state: latest
+      update_cache: yes
+
+  - name: Clone repo
+    become: yes
+    git:
+      repo: https://github.com/spring-projects/spring-petclinic.git
+      dest: "{{ APP_DIR }}"
+      clone: yes
+
+  # - name: Build application
+  #   become: yes
+  #   shell:
+  #     cmd: 

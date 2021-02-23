@@ -1,0 +1,35 @@
+---
+- hosts: all
+  remote_user: root
+
+  tasks:
+  - name: Collect only facts returned by network
+    ansible.builtin.setup:
+      gather_subset:
+        - '!all'
+        - '!any'
+        - 'network'
+
+  - name: Include vars
+    include_vars:
+      file: variables.yml
+
+  - name: Install mysql
+    become: yes
+    apt:
+      name: "mysql-server"
+      state: latest
+      update_cache: yes
+
+  - name: Print network facts
+    become: yes
+    debug:
+      msg: "{{ DB_SUBNET }}"
+
+  - name: Create database user and limit access from only private subnet
+    become: yes
+    shell:
+      cmd: mysql -u root -e "CREATE USER '{{ DB_USER }}'@'{{ DB_SUBNET | regex_replace('.$','%') }}' IDENTIFIED BY '{{ DB_PASSWORD }}';"
+    changed_when: false
+
+

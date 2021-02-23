@@ -1,0 +1,12 @@
+DB_USER: "demo1"
+DB_PASSWORD: "1Q2W3E4r5tzxc@"
+DB_HOST: "{{ ansible_hostname }}"
+DB_PORT: "3306"
+DB_NAME: "demo1"
+DB_SUBNET: "{{ ansible_facts.eth1.ipv4.network }}"
+APP_NAME: "petclinic"
+APP_USER: "deploy"
+APP_DIR: "/home/{{ APP_USER }}/{{ APP_NAME }}"
+APP_DEPENDENCIES:
+  - openjdk-8-jdk
+  - git
